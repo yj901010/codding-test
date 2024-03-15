@@ -6,8 +6,6 @@ class Solution {
         
         ArrayList<String> list = new ArrayList<>();
         
-        int len = cards1.length + cards2.length;
-        
         ArrayList<String> card1 = new ArrayList<>();
         ArrayList<String> card2 = new ArrayList<>();
         
