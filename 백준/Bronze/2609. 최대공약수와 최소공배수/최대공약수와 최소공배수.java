@@ -11,17 +11,25 @@ public class Main {
         int N = Integer.parseInt(st.nextToken());
         int M = Integer.parseInt(st.nextToken());
 
-        int max = 0;
-
-        for(int i=1;i<=N && i<=M;i++){
-            if(N%i==0 && M%i==0){
-                max = i;
-            }
+        System.out.println(gcf(N,M));
+        System.out.println(lcm(N,M));
+    }
+    
+    static int gcf(int N, int M){
+        if(N<M){
+            int temp = N;
+            N = M;
+            M = temp;
         }
-
-        int min = (N*M)/max;
-
-        System.out.println(max);
-        System.out.println(min);
+        while (M!=0){ // 유클리드 호제법
+            int r = N % M;
+            N = M;
+            M = r;
+        }
+        return N;
+    }
+    
+    static int lcm(int N, int M){
+        return N*M / gcf(N,M);
     }
 }
