@@ -6,9 +6,6 @@ import java.util.StringTokenizer;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        int[] in = new int[10];
-        int[] out = new int[10];
-
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int stay = 0;
@@ -16,15 +13,12 @@ public class Main {
 
         for (int i = 0; i < 10; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-            out[i] = Integer.parseInt(st.nextToken());
-            in[i] = Integer.parseInt(st.nextToken());
 
-            stay += in[i];
-            stay -= out[i];
-
-            if (max < stay) {
-                max = stay;
-            }
+            int out = Integer.parseInt(st.nextToken());
+            int in = Integer.parseInt(st.nextToken());
+            stay = stay - out + in;
+            
+            if(max < stay) max = stay;
         }
 
         System.out.print(max);
