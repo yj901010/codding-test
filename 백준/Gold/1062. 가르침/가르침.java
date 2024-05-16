@@ -1,69 +1,97 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int N,K;
-    static boolean[] alpha = new boolean[26];
-    static String[] words;
-    static int max = Integer.MIN_VALUE;
+  static int N, K, answer;
+  static long[] bitmaskWord;
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
+  public static void main(String[] args) throws IOException {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    StringTokenizer stk;
 
-        words = new String[N];
-        for(int i=0;i<N;i++){
-            String tmp = br.readLine();
-            tmp = tmp.replace("anta","");
-            tmp = tmp.replace("tica","");
-            words[i] = tmp;
-        }
+    stk = new StringTokenizer(br.readLine());
+    N = Integer.parseInt(stk.nextToken());
+    K = Integer.parseInt(stk.nextToken());
 
-        if(K < 5){
-            System.out.print("0");
-            return;
-        }else if(K==26){
-            System.out.print(N);
-            return;
-        }
-
-        alpha['a'-'a'] = true;
-        alpha['c'-'a'] = true;
-        alpha['i'-'a'] = true;
-        alpha['n'-'a'] = true;
-        alpha['t'-'a'] = true;
-
-        backtracking(0, 0);
-        System.out.print(max);
+    String[] arr = new String[N];
+    for (int i=0; i<N; i++) {
+      arr[i] = br.readLine();
     }
 
-    static void backtracking(int start, int len){
-        if(len == K-5){
-            int count = 0;
-            for(int i=0;i<N;i++){
-                boolean read = true;
-                for(int j=0;j<words[i].length();j++){
-                    if(!alpha[words[i].charAt(j) - 'a']){
-                        read = false;
-                        break;
-                    }
-                }
-                if(read) count++;
-            }
-            max = Math.max(max,count);
-            return;
-        }
-
-        for(int i=start;i<26;i++){
-            if(!alpha[i]){
-                alpha[i] = true;
-                backtracking(i+1,len+1);
-                alpha[i] = false;
-            }
-        }
+    if (K < 5) {
+      System.out.println(0);
+      return;
     }
+
+    bitmaskWord = strToBitmask(arr);
+
+    boolean[] visited = new boolean[26];
+
+    // a b c d e f g h i j k  l  m  n  o  p  q  r  s  t  u  v  w  x  y  z
+    // 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+    // a, c, i, t, n 포함
+    visited[0] = true;
+    visited[2] = true;
+    visited[8] = true;
+    visited[13] = true;
+    visited[19] = true;
+    // 5개를 포함한 조합 생성
+    comb(5, 0, visited);
+
+    System.out.println(answer);
+  }
+
+  private static void comb(int cnt, int start, boolean[] visited) {
+    if (cnt == K) {
+      long bitmaskV = visitedToBitmask(visited);
+      int result = compareBitmaskWord(bitmaskV);
+      answer = Math.max(answer, result);
+
+      return;
+    }
+
+    for (int i=start; i<26; i++) {
+      if (visited[i])
+        continue;
+
+      visited[i] = true;
+      comb(cnt+1, i+1, visited);
+      visited[i] = false;
+    }
+  }
+
+  private static int compareBitmaskWord(long bitmaskV) {
+    int result = 0;
+
+    for (int i=0; i<bitmaskWord.length; i++)
+      if ((bitmaskWord[i] & bitmaskV) == bitmaskWord[i])
+        result++;
+
+    return result;
+  }
+
+  private static long visitedToBitmask(boolean[] visited) {
+    long result = 0L;
+
+    for (int i=0; i<visited.length; i++)
+      if (visited[i])
+        result = (result | (1 << i));
+
+    return result;
+  }
+
+  private static long[] strToBitmask(String[] arr) {
+    long[] result = new long[arr.length];
+
+    for (int i=0; i<arr.length; i++) {
+      char[] ca = arr[i].toCharArray();
+      long l = 0L;
+      for (char c : ca)
+        l = (l | (1 << c-'a'));
+
+      result[i] = l;
+    }
+
+    return result;
+  }
 }
